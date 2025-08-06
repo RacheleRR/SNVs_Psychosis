@@ -16,6 +16,8 @@ library(purrr)
 library(broom)
 library(ggplot2)
 library(pscl)
+library(ggrepel)
+
 
 
 #  Load my datasets 

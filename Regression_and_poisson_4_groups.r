@@ -288,9 +288,10 @@ PTV_canonic <- PTV_canonic %>% filter(CANONICAL == "YES")
     UHR_NA_SAMPLE_IDS <- read.csv("~/UHR_NA_SAMPLE_IDS.csv", sep="")
     #example S36827
 
-colnames(manifest_correct) <- c("Status", "sample_id", "group")
-
-
+colnames(manifest_correct) <- c("Status", "sample_id", "Case_control")
+#modify manifest 
+manifest_correct$Status <- gsub("FEP-SCZ", "SCZ", manifest_correct$Status)
+manifest_correct$Status <- gsub("FEP-BD", "BD", manifest_correct$Status)
 
 # stuff
 process_df <- function(df, name, brain_gene_consensus_filtered_consensus_no_pitular, brain_gene_consensus_ntm_consensus_no_pitular, genes_schema_pval, genes_bipolar, genes_sfari_non_syndromic, genes_schema_or,private=FALSE) {
@@ -315,8 +316,8 @@ process_df <- function(df, name, brain_gene_consensus_filtered_consensus_no_pitu
         separate_rows(SAMPLES, sep = ",") %>%  # Split SAMPLES only
         mutate(
             sample_id = trimws(SAMPLES),
-            group = sample_label_3  # Use pre-computed labels
-        ) %>% filter(group %in% c("SCZ", "Non_Converter","BD","Converter")) %>% 
+            Status = sample_label_3  # Use pre-computed labels
+        ) %>% filter(Status %in% c("SCZ", "Non_Converter","BD","Converter")) %>% 
         filter(!sample_id %in% UHR_NA_SAMPLE_IDS$V1) %>%  # Remove UHR_NA
         filter(!sample_id %in% Low_Quality_SAMPLES_AND_UHR_NA$Sequencing_number) %>%  # Remove low quality samples
         distinct(SYMBOL, CHROM,REF,ALT, POS, sample_id, .keep_all = TRUE)  # Unique variant/sample
@@ -354,7 +355,7 @@ process_df <- function(df, name, brain_gene_consensus_filtered_consensus_no_pitu
         )
 
     result_df_pure <- expanded_df_pure %>%  
-    group_by(sample_id, group) %>%
+    group_by(sample_id, Status) %>%
         summarise(
             Number_of_Variants_pure = n(),
             Number_of_Brain_Variants_pure = sum(brain),
@@ -365,17 +366,23 @@ process_df <- function(df, name, brain_gene_consensus_filtered_consensus_no_pitu
             Number_of_Schema_Or_Variants_pure = sum(schema_or),
             .groups = "drop"
         )   
-    merged_results <- result_df %>%
-     full_join(
-    result_df_pure,
-    by = "sample_id",
-    suffix = c("_status", "_group")
-  ) %>%distinct()  # Remove duplicate combinations
 
+    merged_results <- result_df %>%
+    full_join(result_df_pure, by = "sample_id", suffix = c("_status", "_group")) %>%
+    mutate(
+        # Create a single Status column, only if both are equal or one is NA
+        Status = case_when(
+            !is.na(Status_status) & !is.na(Status_group) & Status_status == Status_group ~ Status_status,
+            is.na(Status_status) ~ Status_group,
+            is.na(Status_group) ~ Status_status,
+            TRUE ~ NA_character_  # mismatch case
+        )
+    ) %>%
+    select(-Status_status, -Status_group) %>%
+    distinct()
 
     return(merged_results)
 }
-
 # Create separate data frames for each call to process_df
      # Process each dataframe and create separate result tables
     result_df_Missense <- process_df(Missense, "Missense", brain_gene_consensus_filtered_consensus_no_pitular, brain_gene_consensus_ntm_consensus_no_pitular, genes_schema_pval, genes_bipolar, genes_sfari_non_syndromic, genes_schema_or,private=FALSE)

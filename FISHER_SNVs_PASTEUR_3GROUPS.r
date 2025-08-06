@@ -1016,13 +1016,13 @@ setwd("/home/rachele/SNVs/results_pasteur/group3/private")
 
 # save plots 
 
-ggsave("volcano_plot_ind_SCZ.png", volcano_plot_ind, width = 8, height = 6)
-ggsave("volcano_plot_ind_all_SCZ.png", volcano_plot_ind_all, width = 8, height = 6)
-ggsave("matrix_plot_ind_OR_SCZ.png", matrix_plot_ind_OR, width = 8, height = 6)
-ggsave("matrix_plot_ind_p_SCZ.png", matrix_plot_ind_p, width = 8, height = 6)
-ggsave("parallel_plot_ind_SCZ.png", parallel_plot_ind, width = 8, height = 6)
-ggsave("dot_plot_ind_SCZ.png", dot_plot_ind, width = 8, height = 6)
-ggsave("manhattan_plot_ind_SCZ.png", manhattan_plot_ind, width = 8, height = 6)
+ggsave("Fisher_volcano_plot_ind_SCZ.png", volcano_plot_ind, width = 8, height = 6)
+ggsave("Fisher_volcano_plot_ind_all_SCZ.png", volcano_plot_ind_all, width = 8, height = 6)
+ggsave("Fisher_matrix_plot_ind_OR_SCZ.png", matrix_plot_ind_OR, width = 8, height = 6)
+ggsave("Fisher_matrix_plot_ind_p_SCZ.png", matrix_plot_ind_p, width = 8, height = 6)
+ggsave("Fisher_parallel_plot_ind_SCZ.png", parallel_plot_ind, width = 8, height = 6)
+ggsave("Fisher_dot_plot_ind_SCZ.png", dot_plot_ind, width = 8, height = 6)
+ggsave("Fisher_manhattan_plot_ind_SCZ.png", manhattan_plot_ind, width = 8, height = 6)
 
 #save final results
 write.csv(pairwise_results_ind_df, "fisher_individuals_SCZ.csv", row.names = FALSE)

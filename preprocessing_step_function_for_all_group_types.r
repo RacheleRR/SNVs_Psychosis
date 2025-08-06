@@ -131,8 +131,8 @@ process_variant_data <- function(group_type, manifest, dfs) {
   # Recode manifest status based on group type
   manifest <- manifest %>%
     mutate(Status = case_when(
-      group_type == "case_control" & Status %in% c("FEP-SCZ", "FEP-BD","Converter") ~ "case",
-      group_type == "case_control" & Status == "Non_Converter" ~ "control",
+      group_type == "case_control" & Status %in% c("FEP-SCZ", "FEP-BD","Converter") ~ "Case",
+      group_type == "case_control" & Status == "Non_Converter" ~ "Control",
       group_type == "fep_converter" ~ gsub("FEP-SCZ|FEP-BD", "FEP", Status),
       group_type == "scz_bd_converter" ~ gsub("FEP-SCZ", "SCZ", gsub("FEP-BD", "BD", Status)),
       TRUE ~ Status
@@ -184,7 +184,7 @@ process_variant_data <- function(group_type, manifest, dfs) {
     if (is.na(sample_label_2)) return(NA)
     labels <- trimws(strsplit(sample_label_2, ",")[[1]])
     allowed <- switch(group_type,
-      "case_control" = c("case", "control"),
+      "case_control" = c("Case", "Control"),
       "fep_converter" = c("FEP", "Converter", "Non_Converter"),
       "scz_bd_converter" = c("SCZ", "BD", "Converter", "Non_Converter")
     )
