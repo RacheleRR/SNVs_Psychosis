@@ -15,7 +15,7 @@ info_columns = [
     "#CHROM", "POS", "REF", "ALT", "Allele",  "IMPACT", "SYMBOL", 
     "Consequence",  "am_pathogenicity", 
     "LoF", "am_class", "AF_genomes", "MPC", "nhomalt_joint", "AC_genomes", "genomes_filters",
-    "CANONICAL", "Gene", "BIOTYPE"
+    "CANONICAL", "Gene", "BIOTYPE","Feature"
 ] 
 
 
